@@ -6,7 +6,7 @@ exports.createTodo = async (req, res) => {
 
     const newTodo = new Todo({
       title,
-      description,
+      description
     });
 
     const savedTodo = await newTodo.save();
@@ -35,13 +35,13 @@ exports.getTodoById = async (req, res) => {
 
     res.json(todo);
   } catch (error) {
-    res.status(400).json({ message: "Invalid ID format" });
+    res.status(500).json({ message: "Invalid ID format" });
   }
 };
 
 exports.updateTodo = async (req, res) => {
   try {
-    const updatedTodo = await Todo.findByIdAndUpdate(req.params.id, req.body, {
+    const updatedTodo = await Todo.findByIdAndUpdate(req.params.id, {title: req.body.title, description: req.body.description}, {
       new: true,
     });
 
@@ -51,7 +51,7 @@ exports.updateTodo = async (req, res) => {
 
     res.json(updatedTodo);
   } catch (error) {
-    res.status(400).json({ message: "Invalid ID format" });
+    res.status(500).json({ message: "Invalid ID format" });
   }
 };
 
@@ -65,6 +65,6 @@ exports.deleteTodo = async (req, res) => {
 
     res.json({ message: "Todo deleted successfully" });
   } catch (error) {
-    res.status(400).json({ message: "Invalid ID format" });
+    res.status(500).json({ message: "internal server error" });
   }
 };
