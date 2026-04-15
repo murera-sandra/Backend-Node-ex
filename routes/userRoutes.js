@@ -15,4 +15,14 @@ router.post(
   }),
   userController.singUp,
 );
+router.post(
+  "/login",
+  celebrate({
+    [Segments.BODY]: Joi.object().keys({
+      identifier: Joi.string().required(),
+      password: Joi.string().required(),
+    }),
+  }),
+  userController.login,
+);
 module.exports = router;

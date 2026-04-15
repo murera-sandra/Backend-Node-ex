@@ -9,7 +9,6 @@ require("dotenv").config();
 const app = express();
 
 app.use(cors());
-app.use(errors());
 app.use(express.json());
 app.use("/api/todos", todoRoutes); //endpoint prefix
 app.use("/api/users", userRoutes);
@@ -26,3 +25,5 @@ app.get("/", (req, res) => {
 app.listen(3000, () => {
   console.log("connected to 3000 port");
 });
+
+app.use(errors());
