@@ -2,11 +2,14 @@ const Todo = require("../models/Todo");
 
 exports.createTodo = async (req, res) => {
   try {
+    const userId = req.user.id;
+
     const { title, description } = req.body;
 
     const newTodo = new Todo({
       title,
-      description
+      description,
+      user_id: userId
     });
 
     const savedTodo = await newTodo.save();

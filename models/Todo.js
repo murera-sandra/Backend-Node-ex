@@ -8,7 +8,8 @@ const  todoSchema = new mongoose.Schema({
     completed:{
         type:Boolean,
         default:false
-    }
+    },
+    user_id: {type: mongoose.Schema.Types.ObjectId, ref:'User'}
 });
 
 module.exports = mongoose.model('Todo',todoSchema);

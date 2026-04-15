@@ -3,9 +3,11 @@ const router = express.Router();
 
 const todoController = require("../controllers/todoController");
 const { celebrate, Segments, Joi } = require("celebrate"); 
+const auth = require('../middleware/auth');
 
 router.post(
   "/",
+  auth,
   celebrate({
     [Segments.BODY]: Joi.object().keys({
       title: Joi.string().required().min(3),
@@ -19,6 +21,7 @@ router.get("/", todoController.getAllTodos);
 
 router.get(
   "/:id",
+  auth,
   celebrate({
     // FIX 2: ID is in PARAMS, not BODY
     [Segments.PARAMS]: Joi.object().keys({
@@ -30,6 +33,7 @@ router.get(
 
 router.put(
   "/:id",
+  auth,
   celebrate({
     // FIX 3: Swapped PARAMS and BODY logic
     [Segments.PARAMS]: Joi.object().keys({
@@ -46,6 +50,7 @@ router.put(
 
 router.delete(
   "/:id",
+  auth,
   celebrate({
     [Segments.PARAMS]: Joi.object().keys({
       id: Joi.string().length(24).hex().required(),
