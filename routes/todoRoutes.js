@@ -17,13 +17,12 @@ router.post(
   todoController.createTodo,
 );
 
-router.get("/", todoController.getAllTodos);
+router.get("/", auth,todoController.getAllTodos);
 
 router.get(
   "/:id",
   auth,
   celebrate({
-    // FIX 2: ID is in PARAMS, not BODY
     [Segments.PARAMS]: Joi.object().keys({
       id: Joi.string().length(24).hex().required(),
     }),
@@ -35,7 +34,6 @@ router.put(
   "/:id",
   auth,
   celebrate({
-    // FIX 3: Swapped PARAMS and BODY logic
     [Segments.PARAMS]: Joi.object().keys({
       id: Joi.string().length(24).hex().required(),
     }),
@@ -58,5 +56,13 @@ router.delete(
   }),
   todoController.deleteTodo,
 );
+router.patch('/:id/complete',auth,
+  celebrate({
+    [Segments.PARAMS]:Joi.object().keys({
+      id:Joi.string().required().hex().length(24)
+    })
+  }),
+  todoController.markAsCompleted
+)
 
 module.exports = router;

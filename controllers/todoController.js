@@ -1,74 +1,108 @@
 const Todo = require("../models/Todo");
 
+
 exports.createTodo = async (req, res) => {
   try {
     const userId = req.user.id;
-
     const { title, description } = req.body;
 
-    const newTodo = new Todo({
+    const todo = await Todo.create({
       title,
       description,
-      user_id: userId
+      user: userId,
     });
 
-    const savedTodo = await newTodo.save();
-    res.status(201).json(savedTodo);
+    res.status(201).json(todo);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
+
 exports.getAllTodos = async (req, res) => {
   try {
-    const todos = await Todo.find();
+    const todos = await Todo.find({ user: req.user.id });
     res.json(todos);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
+
 exports.getTodoById = async (req, res) => {
   try {
     const todo = await Todo.findById(req.params.id);
 
-    if (!todo) {
-      return res.status(404).json({ message: "Todo not found" });
+    if (!todo) return res.status(404).json({ message: "Todo not found" });
+
+    if (todo.user.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Not authorized" });
     }
 
     res.json(todo);
   } catch (error) {
-    res.status(500).json({ message: "Invalid ID format" });
+    res.status(500).json({ message: error.message });
   }
 };
+
 
 exports.updateTodo = async (req, res) => {
   try {
-    const updatedTodo = await Todo.findByIdAndUpdate(req.params.id, 
-      {title: req.body.title, description: req.body.description}, 
-      {new: true}
-    );
+    const todo = await Todo.findById(req.params.id);
 
-    if (!updatedTodo) {
-      return res.status(404).json({ message: "Todo not found" });
+    if (!todo) return res.status(404).json({ message: "Todo not found" });
+
+    if (todo.user.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Not authorized" });
     }
 
-    res.json(updatedTodo);
+    const updated = await Todo.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+
+    res.json(updated);
   } catch (error) {
-    res.status(500).json({ message: "Invalid ID format" });
+    res.status(500).json({ message: error.message });
   }
 };
 
+
 exports.deleteTodo = async (req, res) => {
   try {
-    const deletedTodo = await Todo.findByIdAndDelete(req.params.id);
+    const todo = await Todo.findById(req.params.id);
 
-    if (!deletedTodo) {
-      return res.status(404).json({ message: "Todo not found" });
+    if (!todo) return res.status(404).json({ message: "Todo not found" });
+
+    if (todo.user.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Not authorized" });
     }
 
-    res.json({ message: "Todo deleted successfully" });
+    await todo.deleteOne();
+
+    res.json({ message: "Deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: "internal server error" });
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+exports.markAsCompleted = async (req, res) => {
+  try {
+    const todo = await Todo.findById(req.params.id);
+
+    if (!todo) return res.status(404).json({ message: "Todo not found" });
+
+    if (todo.user.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    todo.completed = true;
+    await todo.save();
+
+    res.json(todo);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
