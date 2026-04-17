@@ -1,6 +1,5 @@
 const Todo = require("../models/Todo");
 
-
 exports.createTodo = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -18,7 +17,6 @@ exports.createTodo = async (req, res) => {
   }
 };
 
-
 exports.getAllTodos = async (req, res) => {
   try {
     const todos = await Todo.find({ user: req.user.id });
@@ -27,7 +25,6 @@ exports.getAllTodos = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 exports.getTodoById = async (req, res) => {
   try {
@@ -45,7 +42,6 @@ exports.getTodoById = async (req, res) => {
   }
 };
 
-
 exports.updateTodo = async (req, res) => {
   try {
     const todo = await Todo.findById(req.params.id);
@@ -56,18 +52,15 @@ exports.updateTodo = async (req, res) => {
       return res.status(403).json({ message: "Not authorized" });
     }
 
-    const updated = await Todo.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
+    const updated = await Todo.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
 
     res.json(updated);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 exports.deleteTodo = async (req, res) => {
   try {
@@ -86,7 +79,6 @@ exports.deleteTodo = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 exports.markAsCompleted = async (req, res) => {
   try {

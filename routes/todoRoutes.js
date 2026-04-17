@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 
 const todoController = require("../controllers/todoController");
-const { celebrate, Segments, Joi } = require("celebrate"); 
-const auth = require('../middleware/auth');
+const { celebrate, Segments, Joi } = require("celebrate");
+const auth = require("../middleware/auth");
 
 router.post(
   "/",
@@ -17,7 +17,7 @@ router.post(
   todoController.createTodo,
 );
 
-router.get("/", auth,todoController.getAllTodos);
+router.get("/", auth, todoController.getAllTodos);
 
 router.get(
   "/:id",
@@ -56,13 +56,15 @@ router.delete(
   }),
   todoController.deleteTodo,
 );
-router.patch('/:id/complete',auth,
+router.patch(
+  "/:id/complete",
+  auth,
   celebrate({
-    [Segments.PARAMS]:Joi.object().keys({
-      id:Joi.string().required().hex().length(24)
-    })
+    [Segments.PARAMS]: Joi.object().keys({
+      id: Joi.string().required().hex().length(24),
+    }),
   }),
-  todoController.markAsCompleted
-)
+  todoController.markAsCompleted,
+);
 
 module.exports = router;

@@ -2,7 +2,6 @@ const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
-
 exports.singUp = async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -31,21 +30,17 @@ exports.singUp = async (req, res) => {
         _id: savedUser._id,
       },
     });
-
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-
 exports.login = async (req, res) => {
   try {
     const { password, identifier } = req.body;
 
-  
     let user = await User.findOne({ email: identifier });
 
-    
     if (!user) {
       user = await User.findOne({ username: identifier });
     }
@@ -60,17 +55,14 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
     res.json({
       message: "login successful",
       token,
     });
-
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
